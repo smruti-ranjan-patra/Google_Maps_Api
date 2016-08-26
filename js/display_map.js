@@ -1,15 +1,14 @@
 function initMap()
 {
-	// displayMap();
+	displayMap();
 }
 
 $(document).on('click', '#search_button', function()
 {
-	// console.log('Hi');
-	// $('#map').html($('#zip').val());
-	// displayMap();
 	var address = ($('#address').val() != '') ? $('#address').val() : '';
 	var zip = ($('#zip').val() != '') ? $('#zip').val() : '';
+	var lat = '';
+	var lng = '';
 
 	if(address === '' && zip === '')
 	{
@@ -19,31 +18,9 @@ $(document).on('click', '#search_button', function()
 	{
 		var url = generateSearchUrl(address, zip);
 	}
-	/*var geocoder = new google.maps.Geocoder(); // startup address finder
-	geocoder.geocode( { 'address': zip, 'region': 'in' }, function(results, status) {
-		var param = results[0].geometry.location;
-		var myLatlng = new google.maps.LatLng(param.lat(), param.lng());
-		console.log(myLatlng);
-		console.log(status);
-	});
-	var address = zip;*/
-	var lat = ''; var lng = '';
-	/*var geocoder = new google.maps.Geocoder();
-	geocoder.geocode( { 'address': address}, function(results, status) {
-		if (status == google.maps.GeocoderStatus.OK)
-		{
-			lat = results[0].geometry.location.lat();
-			lng = results[0].geometry.location.lng();
-			alert('Latitude: ' + lat + ' Logitude: ' + lng);
-		}
-		else
-		{
-		alert("Geocode was not successful for the following reason: " + status);
-		}
-	});*/
+
 	$.ajax(
 	{
-		// url: 'https://maps.googleapis.com/maps/api/geocode/json?address=' + zip + '&key=AIzaSyDp1rkMd-LLB9IT26iCVf3U_3g2iV_hgiw',
 		url: url,
 		type: 'GET',
 		dataType: 'json',
@@ -52,7 +29,6 @@ $(document).on('click', '#search_button', function()
 		{
 			lat = (response.results[0].geometry.location.lat);
 			lng = (response.results[0].geometry.location.lng);
-			// alert('Latitude: ' + lat + ' Logitude: ' + lng);
 			displayMap(lat, lng);
 		}
 	});
@@ -61,7 +37,6 @@ $(document).on('click', '#search_button', function()
 function generateSearchUrl(address='', zip='')
 {
 	var uri = 'https://maps.googleapis.com/maps/api/geocode/json?address=' + encodeURIComponent(address) + encodeURIComponent(zip) + '&key=AIzaSyDp1rkMd-LLB9IT26iCVf3U_3g2iV_hgiw';
-	// var ajax_uri = encodeURIComponent(uri);
 	return uri;
 }
 
@@ -111,7 +86,7 @@ function displayMap(lat=0, lng=0)
 	var bermunda_area = new google.maps.Polygon({
 		paths: bermunda_coords,
 		strokeColor: 'red',
-		strokeOpacity: 0.8,
+		strokeOpacity: 0.5,
 		strokeWeight: 2,
 		fillColor: 'red',
 		fillOpacity: 0.35
@@ -119,7 +94,7 @@ function displayMap(lat=0, lng=0)
 	var kalpana_area = new google.maps.Polygon({
 		paths: kalpana_coords,
 		strokeColor: 'blue',
-		strokeOpacity: 0.8,
+		strokeOpacity: 0.5,
 		strokeWeight: 2,
 		fillColor: 'blue',
 		fillOpacity: 0.35
@@ -127,7 +102,7 @@ function displayMap(lat=0, lng=0)
 	var kharvel_area = new google.maps.Polygon({
 		paths: kharvel_coords,
 		strokeColor: 'yellow',
-		strokeOpacity: 0.8,
+		strokeOpacity: 0.5,
 		strokeWeight: 2,
 		fillColor: 'yellow',
 		fillOpacity: 0.35
@@ -135,7 +110,7 @@ function displayMap(lat=0, lng=0)
 	var jaydev_area = new google.maps.Polygon({
 		paths: jaydev_coords,
 		strokeColor: 'green',
-		strokeOpacity: 0.8,
+		strokeOpacity: 0.5,
 		strokeWeight: 2,
 		fillColor: 'green',
 		fillOpacity: 0.35
@@ -143,7 +118,7 @@ function displayMap(lat=0, lng=0)
 	var patia_area = new google.maps.Polygon({
 		paths: patia_coords,
 		strokeColor: 'cyan',
-		strokeOpacity: 0.8,
+		strokeOpacity: 0.5,
 		strokeWeight: 2,
 		fillColor: 'cyan',
 		fillOpacity: 0.35
@@ -165,7 +140,7 @@ function displayMap(lat=0, lng=0)
 	setMarkers(map);
 }
 
-var beaches = [
+var pizza_centers = [
 		['Bermunda Dominos', 20.278448, 85.796944, 4],
 		['Kalpana Dominos', 20.260616, 85.843750, 5],
 		['Kharvel Nagar Dominos', 20.275663, 85.843605, 3],
@@ -175,14 +150,7 @@ var beaches = [
 
 function setMarkers(map)
 {
-	// Adds markers to the map.
-
-	// Marker sizes are expressed as a Size of X,Y where the origin of the image
-	// (0,0) is located in the top left of the image.
-
-	// Origins, anchor positions and coordinates of the marker increase in the X
-	// direction to the right and in the Y direction down.
-	var image =
+	var image = 
 	{
 		url: 'http://localhost/project/Google_Maps_Api/images/demo.jpg',
 		// This marker is 20 pixels wide by 32 pixels high.
@@ -192,17 +160,15 @@ function setMarkers(map)
 		// The anchor for this image is the base of the flagpole at (0, 32).
 		anchor: new google.maps.Point(0, 32)
 	};
-	// Shapes define the clickable region of the icon. The type defines an HTML
-	// <area> element 'poly' which traces out a polygon as a series of X,Y points.
-	// The final coordinate closes the poly by connecting to the first coordinate.
 	var shape =
 	{
 		coords: [1, 1, 1, 20, 18, 20, 18, 1],
 		type: 'poly'
 	};
-	for (var i = 0; i < beaches.length; i++)
+	
+	for (var i = 0; i < pizza_centers.length; i++)
 	{
-		var beach = beaches[i];
+		var beach = pizza_centers[i];
 		var marker = new google.maps.Marker({
 			position: {lat: beach[1], lng: beach[2]},
 			map: map,

@@ -24,8 +24,8 @@
 
 		<!-- JavaScripts -->
 		<script src="//code.jquery.com/jquery.js"></script>
-		<script type="text/javascript" src="js/display_map.js"></script>
 		<script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDp1rkMd-LLB9IT26iCVf3U_3g2iV_hgiw&callback=initMap"
 		></script>
+		<script type="text/javascript" src="js/display_map.js"></script>
 	</body>
 </html>
